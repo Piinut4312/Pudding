@@ -1,0 +1,82 @@
+_NL             : /(\r?\n[\t ]*)+/
+SINGLE_COMMENT  : "#" /[^\n]*/ _NL
+
+program         : block
+block           : (_NL* stmt)+ _NL*
+?stmt           : expr | put_value | if_stmt | loop_stmt | while_stmt | function_define | function_return
+?expr           : num_expr | bool_expr | str_expr | array_expr
+
+num_atom        : INT -> integer
+                | FLOAT -> float
+bool_atom       : BOOLEAN -> boolean
+str_atom        : ESCAPED_STRING -> string
+id              : ID -> identifier
+
+?num_expr       : add | sub | neg | num_term
+?num_term       : mult | div | mod | num_factor
+?num_factor     : exponents | num_value
+?num_value      : num_atom | variable | "(" num_expr ")" | num_unary_op | array_lookup | function_call
+?num_unary_op   : factorial | abs
+add             : num_expr "+" num_term
+sub             : num_expr "-" num_term
+mult            : num_term "*" num_factor
+div             : num_term "/" num_factor
+mod             : num_term "%" num_factor | num_term "mod" num_factor
+exponents       : num_value "^" num_factor
+neg             : "-" num_term
+abs             : "|" num_expr "|"
+factorial       : num_value "!"
+
+?bool_expr      : logic_or | bool_term
+?bool_term      : logic_xor | bool_factor
+?bool_factor    : logic_and | bool_value
+?bool_value     : bool_atom | variable | put_value | "(" bool_expr ")" | compare | logic_not | array_lookup | function_call
+logic_not       : "not" bool_value
+?logic_bin_op   : logic_and | logic_or | logic_xor
+logic_and       : bool_term "and" bool_factor
+logic_or        : bool_term "or" bool_factor
+logic_xor       : bool_term "xor" bool_factor
+
+?str_expr       : str_term | str_join
+?str_term       : variable | function_call | str_atom
+str_join        : str_expr "+" str_term
+
+?array_expr     : array | array_lookup
+array           : "[" (expr ("," expr)*)? "]"
+array_lookup    : id ("[" num_expr "]")+
+
+compare         : num_expr (gt | ge | lt | le)+ | expr equ+
+gt              : ">" num_expr
+ge              : ">=" num_expr
+lt              : "<" num_expr
+le              : "<=" num_expr
+equ             : "=" expr
+
+put_value       : "put" expr "in" container ("at" address)?
+container       : id
+variable        : id
+address         : num_expr ("," num_expr)*
+
+if_stmt         : "if" bool_expr do_stmt elif_stmt* else_stmt?
+?do_stmt        : "do" _NL _INDENT block _DEDENT
+elif_stmt       : "elif" bool_expr do_stmt
+else_stmt       : "else" _NL _INDENT block _DEDENT
+
+loop_stmt       : "for" container "from" num_expr "to" num_expr "do" _NL _INDENT block _DEDENT
+while_stmt      : "while" bool_expr "do" _NL _INDENT block _DEDENT
+
+function_return : "return" expr _NL*
+function_define : "define" id "(" args ")" "as" _NL _INDENT block _DEDENT
+args            : (container ("," container)*)?
+function_call.1 : id "(" (expr ("," expr)*)? ")"
+
+ID              : /(?!"not"|"and"|"or"|"xor"|"put"|"in"|"at"|"if"|"elif"|"else"|"for"|"from"|"to"|"do"|"while"|"return"|"define"|"as"|"true"|"false")[a-zA-Z_][a-zA-Z0-9_]*/
+BOOLEAN         : "true"|"false"
+
+%import common.INT
+%import common.FLOAT
+%import common.ESCAPED_STRING
+%import common.WS_INLINE
+%declare _INDENT _DEDENT
+%ignore WS_INLINE
+%ignore SINGLE_COMMENT

@@ -1,7 +1,6 @@
 /.venv
 /build
 /code_example.txt
-/grammar_definition.txt
 /pudding.bat
 /pudding.spec
 /__pycache__
