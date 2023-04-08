@@ -1,4 +1,4 @@
-import sys
+import sys, os
 from pudding_parser import PuddingParser
 from pudding_interpreter import PuddingInterpreter
 from pudding_builtins import BuiltinFunctions
@@ -27,6 +27,7 @@ def main():
 
         print(">>> Running code...\n")
         result = interpreter.visit(parse_tree)
+        os.system('pause')
 
 if __name__ == "__main__":
     main()
