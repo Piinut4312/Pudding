@@ -1,0 +1,17 @@
+define gcd(x, y) as
+
+    put x in m
+    put y in n
+
+    if m > n do
+        put x in n
+        put y in m
+
+    if m = 0 do
+        return n
+    
+    return gcd(m, n mod m)
+
+put to_int(input("The first number is: ")) in num1
+put to_int(input("The second number is: ")) in num2
+print("The greatest common divisor of these two numbers is: " + to_str(gcd(num1, num2)))
