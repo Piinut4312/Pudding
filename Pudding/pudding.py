@@ -1,7 +1,7 @@
 import sys
 from pudding_parser import PuddingParser
 from pudding_interpreter import PuddingInterpreter
-from Pudding.pudding_builtins import BuiltinFunctions
+from pudding_builtins import BuiltinFunctions
 
 def main():
 

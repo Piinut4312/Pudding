@@ -21,3 +21,7 @@ Pudding/build/pudding/localpycs/pyimod03_ctypes.pyc
 Pudding/build/pudding/localpycs/pyimod04_pywin32.pyc
 Pudding/build/pudding/localpycs/struct.pyc
 Pudding/pudding.spec
+Pudding/__pycache__/pudding_builtins.cpython-310.pyc
+Pudding/__pycache__/pudding_data.cpython-310.pyc
+Pudding/__pycache__/pudding_interpreter.cpython-310.pyc
+Pudding/__pycache__/pudding_parser.cpython-310.pyc
