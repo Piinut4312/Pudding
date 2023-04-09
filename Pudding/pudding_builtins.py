@@ -1,4 +1,4 @@
-from pudding_data import Function, Data, DataType, StringData, NUMBERS, ITERABLES
+from pudding_data import Function, Data, DataType, StringData,ListData, NUMBERS, ITERABLES
 import math
 
 # System and basic IO
@@ -214,7 +214,7 @@ class LogFunction(Function):
 
         return Data(DataType.FLOAT, math.log(x.value, base.value))
     
-# String
+# Strings and lists
 class LenFunction(Function):
 
     def __init__(self):
@@ -229,6 +229,46 @@ class LenFunction(Function):
 
         return Data(DataType.INTEGER, len(x.value))
 
+class ConcatFunction(Function):
+
+    def __init__(self):
+        super().__init__(arg_names=['<x>', '<y>'], function=None)
+
+    def execute(self, intepreter, tree):
+        self.populate_args(intepreter, tree)
+        x = self.lookup_symbol_table(intepreter, self.arg_names[0])
+        y = self.lookup_symbol_table(intepreter, self.arg_names[1])
+        if x.type != DataType.LIST or y.type != DataType.LIST:
+            print('type error: expecting lists')
+            exit()
+
+        return ListData(x.value+y.value)
+
+class SliceFunction(Function):
+
+    def __init__(self):
+        super().__init__(arg_names=['<source>', '<begin>', 'end'], function=None)
+
+    def execute(self, intepreter, tree):
+        self.populate_args(intepreter, tree)
+        source = self.lookup_symbol_table(intepreter, self.arg_names[0])
+        begin = self.lookup_symbol_table(intepreter, self.arg_names[1])
+        end = self.lookup_symbol_table(intepreter, self.arg_names[2])
+
+        if source.type not in ITERABLES:
+            print('type error: expecting iterables (string or list)')
+            exit()
+        
+        if begin.type != DataType.INTEGER or end.type != DataType.INTEGER:
+            print('type error: slice function indexes must be integers')
+            exit()
+
+        if source.type == DataType.LIST:
+            return ListData(source.value[begin.value:end.value])
+        
+        if source.type == DataType.STRING:
+            return StringData(source.value[begin.value:end.value])
+
 BuiltinFunctions = {
     'exit' : ExitFunction(),
     'print': PrintFunction(),
@@ -239,7 +279,7 @@ BuiltinFunctions = {
     'sin' : SinFunction(),
     'cos' : CosFunction(),
     'tan' : TanFunction(),
-    'asin' : AsinFunction(),\
+    'asin' : AsinFunction(),
     'acos' : AcosFunction(),
     'atan' : AtanFunction(),
     'log' : LogFunction(),
@@ -248,4 +288,6 @@ BuiltinFunctions = {
     'to_float': ToIntFunction(),
     'to_str': ToStrFunction(),
     'len' : LenFunction(),
+    'concat' : ConcatFunction(),
+    'slice' : SliceFunction(),
 }
