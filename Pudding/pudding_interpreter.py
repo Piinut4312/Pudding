@@ -264,13 +264,15 @@ class PuddingInterpreter(Interpreter):
             if i.type != DataType.INTEGER:
                 print('index error: array index must be integers')
                 exit()
-            if not isinstance(array_slice.value, list):
-                print('type error: [] only supports lists')
+            if not isinstance(array_slice.value, list) and not isinstance(array_slice.value, str):
+                print('type error: [] operator only supports strings and lists')
                 exit()
             array_slice = array_slice.value[i.value]
         
         if isinstance(array_slice, list):
             return ListData(array_slice)
+        elif isinstance(array_slice, str):
+            return StringData(array_slice)
         else:
             return array_slice
 

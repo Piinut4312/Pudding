@@ -38,7 +38,7 @@ logic_or        : bool_term "or" bool_factor
 logic_xor       : bool_term "xor" bool_factor
 
 ?str_expr       : str_term | str_join
-?str_term       : variable | function_call | str_atom
+?str_term       : variable | array_lookup | function_call | str_atom
 str_join        : str_expr "+" str_term
 
 ?array_expr     : array | array_lookup

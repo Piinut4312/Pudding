@@ -11,6 +11,7 @@ class DataType(Enum):
     FUNCTION = auto()
 
 NUMBERS = (DataType.INTEGER, DataType.FLOAT)
+ITERABLES = (DataType.STRING, DataType.LIST)
 
 class Data:
 

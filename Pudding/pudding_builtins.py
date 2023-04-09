@@ -1,4 +1,4 @@
-from pudding_data import Function, Data, DataType, StringData, NUMBERS
+from pudding_data import Function, Data, DataType, StringData, NUMBERS, ITERABLES
 import math
 
 # System and basic IO
@@ -72,8 +72,7 @@ class ToStrFunction(Function):
         data = self.lookup_symbol_table(intepreter, self.arg_names[0])
         return StringData(str(data.value))
 
-# Numbers
-
+# Math
 class FloorFunction(Function):
 
     def __init__(self):
@@ -82,7 +81,7 @@ class FloorFunction(Function):
     def execute(self, intepreter, tree):
         self.populate_args(intepreter, tree)
         x = self.lookup_symbol_table(intepreter, self.arg_names[0])
-        if x.type != DataType.FLOAT and x.type != DataType.INTEGER:
+        if x.type not in NUMBERS:
             print('type error: expecting numeric value (integer or float)')
             exit()
 
@@ -96,11 +95,139 @@ class CeilingFunction(Function):
     def execute(self, intepreter, tree):
         self.populate_args(intepreter, tree)
         x = self.lookup_symbol_table(intepreter, self.arg_names[0])
-        if x.type != DataType.FLOAT and x.type != DataType.INTEGER:
+        if x.type not in NUMBERS:
             print('type error: expecting numeric value (integer or float)')
             exit()
 
         return Data(DataType.INTEGER, int(math.ceil(x.value)))
+    
+class SqrtFunction(Function):
+
+    def __init__(self):
+        super().__init__(arg_names=['<x>'], function=None)
+
+    def execute(self, intepreter, tree):
+        self.populate_args(intepreter, tree)
+        x = self.lookup_symbol_table(intepreter, self.arg_names[0])
+        if x.type not in NUMBERS:
+            print('type error: expecting numeric value (integer or float)')
+            exit()
+
+        return Data(DataType.FLOAT, math.sqrt(x.value))
+    
+class SinFunction(Function):
+
+    def __init__(self):
+        super().__init__(arg_names=['<x>'], function=None)
+
+    def execute(self, intepreter, tree):
+        self.populate_args(intepreter, tree)
+        x = self.lookup_symbol_table(intepreter, self.arg_names[0])
+        if x.type not in NUMBERS:
+            print('type error: expecting numeric value (integer or float)')
+            exit()
+
+        return Data(DataType.FLOAT, math.sin(x.value))
+    
+class CosFunction(Function):
+
+    def __init__(self):
+        super().__init__(arg_names=['<x>'], function=None)
+
+    def execute(self, intepreter, tree):
+        self.populate_args(intepreter, tree)
+        x = self.lookup_symbol_table(intepreter, self.arg_names[0])
+        if x.type not in NUMBERS:
+            print('type error: expecting numeric value (integer or float)')
+            exit()
+
+        return Data(DataType.FLOAT, math.cos(x.value))
+    
+class TanFunction(Function):
+
+    def __init__(self):
+        super().__init__(arg_names=['<x>'], function=None)
+
+    def execute(self, intepreter, tree):
+        self.populate_args(intepreter, tree)
+        x = self.lookup_symbol_table(intepreter, self.arg_names[0])
+        if x.type not in NUMBERS:
+            print('type error: expecting numeric value (integer or float)')
+            exit()
+
+        return Data(DataType.FLOAT, math.tan(x.value))
+    
+class AsinFunction(Function):
+
+    def __init__(self):
+        super().__init__(arg_names=['<x>'], function=None)
+
+    def execute(self, intepreter, tree):
+        self.populate_args(intepreter, tree)
+        x = self.lookup_symbol_table(intepreter, self.arg_names[0])
+        if x.type not in NUMBERS:
+            print('type error: expecting numeric value (integer or float)')
+            exit()
+
+        return Data(DataType.FLOAT, math.asin(x.value))
+    
+class AcosFunction(Function):
+
+    def __init__(self):
+        super().__init__(arg_names=['<x>'], function=None)
+
+    def execute(self, intepreter, tree):
+        self.populate_args(intepreter, tree)
+        x = self.lookup_symbol_table(intepreter, self.arg_names[0])
+        if x.type not in NUMBERS:
+            print('type error: expecting numeric value (integer or float)')
+            exit()
+
+        return Data(DataType.FLOAT, math.acos(x.value))
+    
+class AtanFunction(Function):
+
+    def __init__(self):
+        super().__init__(arg_names=['<x>'], function=None)
+
+    def execute(self, intepreter, tree):
+        self.populate_args(intepreter, tree)
+        x = self.lookup_symbol_table(intepreter, self.arg_names[0])
+        if x.type not in NUMBERS:
+            print('type error: expecting numeric value (integer or float)')
+            exit()
+
+        return Data(DataType.FLOAT, math.atan(x.value))
+    
+class LogFunction(Function):
+
+    def __init__(self):
+        super().__init__(arg_names=['<x>', '<base>'], function=None)
+
+    def execute(self, intepreter, tree):
+        self.populate_args(intepreter, tree)
+        x = self.lookup_symbol_table(intepreter, self.arg_names[0])
+        base = self.lookup_symbol_table(intepreter, self.arg_names[1])
+        if x.type not in NUMBERS or base.type not in NUMBERS:
+            print('type error: expecting numeric value (integer or float)')
+            exit()
+
+        return Data(DataType.FLOAT, math.log(x.value, base.value))
+    
+# String
+class LenFunction(Function):
+
+    def __init__(self):
+        super().__init__(arg_names=['<x>'], function=None)
+
+    def execute(self, intepreter, tree):
+        self.populate_args(intepreter, tree)
+        x = self.lookup_symbol_table(intepreter, self.arg_names[0])
+        if x.type not in ITERABLES:
+            print('type error: expecting iterables (string or list)')
+            exit()
+
+        return Data(DataType.INTEGER, len(x.value))
 
 BuiltinFunctions = {
     'exit' : ExitFunction(),
@@ -108,8 +235,17 @@ BuiltinFunctions = {
     'input': InputFunction(),
     'floor': FloorFunction(),
     'ceil' : CeilingFunction(),
+    'sqrt' : SqrtFunction(),
+    'sin' : SinFunction(),
+    'cos' : CosFunction(),
+    'tan' : TanFunction(),
+    'asin' : AsinFunction(),\
+    'acos' : AcosFunction(),
+    'atan' : AtanFunction(),
+    'log' : LogFunction(),
     'type': TypeFunction(),
     'to_int': ToIntFunction(),
     'to_float': ToIntFunction(),
     'to_str': ToStrFunction(),
+    'len' : LenFunction(),
 }
